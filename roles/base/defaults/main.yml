@@ -1,6 +1,6 @@
 ---
 base_hostname: raspi-ai
-base_locale: fr_FR.UTF-8
+base_locale: en_US.UTF-8
 base_timezone: Europe/Paris
 
 base_packages:

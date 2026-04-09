@@ -4,6 +4,9 @@
   become: true
 
   roles:
-    - base
-    - docker
-    - claude-code
+    - role: base
+      tags: base
+    - role: docker
+      tags: docker
+    - role: claude-code
+      tags: claude-code
