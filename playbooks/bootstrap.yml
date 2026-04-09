@@ -1,0 +1,9 @@
+---
+- name: Bootstrap Raspberry Pi 5 as AI node
+  hosts: all
+  become: true
+
+  roles:
+    - base
+    - docker
+    - claude-code

@@ -1,0 +1,21 @@
+---
+base_hostname: raspi-ai
+base_locale: fr_FR.UTF-8
+base_timezone: Europe/Paris
+
+base_packages:
+  - git
+  - curl
+  - wget
+  - vim
+  - htop
+  - tmux
+  - jq
+  - unzip
+  - build-essential
+  - python3-pip
+  - ufw
+  - ca-certificates
+  - gnupg
+  - lsb-release
+  - apt-transport-https
