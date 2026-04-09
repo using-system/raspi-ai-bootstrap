@@ -1,0 +1,10 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+  vars:
+    molecule_test: true
+  roles:
+    - base
+    - docker
+    - claude-code

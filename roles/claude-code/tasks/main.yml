@@ -1,0 +1,74 @@
+---
+- name: Add NodeSource GPG key
+  ansible.builtin.get_url:
+    url: https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key
+    dest: /etc/apt/keyrings/nodesource.asc
+    mode: "0644"
+
+- name: Add NodeSource apt repository
+  ansible.builtin.apt_repository:
+    repo: >-
+      deb [signed-by=/etc/apt/keyrings/nodesource.asc]
+      https://deb.nodesource.com/node_{{ nodejs_major_version }}.x
+      nodistro main
+    filename: nodesource
+    state: present
+
+- name: Install Node.js
+  ansible.builtin.apt:
+    name: nodejs
+    state: present
+    update_cache: true
+
+- name: Install Claude Code globally via npm
+  community.general.npm:
+    name: "@anthropic-ai/claude-code"
+    global: true
+    state: present
+
+- name: Deploy Claude Code environment profile script
+  ansible.builtin.template:
+    src: claude.sh.j2
+    dest: /etc/profile.d/claude.sh
+    mode: "0600"
+    owner: root
+    group: root
+
+- name: Create Claude Code user config directory
+  ansible.builtin.file:
+    path: "~{{ ansible_user }}/.claude"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0755"
+
+- name: Build Claude Code user settings
+  ansible.builtin.set_fact:
+    claude_user_settings: >-
+      {{
+        {}
+        | combine(
+            claude_superpowers_enabled | ternary(
+              {
+                'extraKnownMarketplaces': {
+                  'superpowers-marketplace': {
+                    'source': { 'source': 'github', 'repo': 'obra/superpowers-marketplace' }
+                  }
+                },
+                'enabledPlugins': {
+                  'superpowers@superpowers-marketplace': true
+                }
+              },
+              {}
+            )
+          )
+      }}
+
+- name: Deploy Claude Code user settings
+  ansible.builtin.template:
+    src: claude-settings.json.j2
+    dest: "~{{ ansible_user }}/.claude/settings.json"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0644"
+  when: claude_user_settings | length > 0

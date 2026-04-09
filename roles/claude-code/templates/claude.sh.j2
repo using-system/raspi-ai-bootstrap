@@ -1,0 +1,6 @@
+# Claude Code configuration — managed by Ansible
+{% if anthropic_api_key is defined %}
+export ANTHROPIC_API_KEY="{{ anthropic_api_key }}"
+{% else %}
+# export ANTHROPIC_API_KEY="your-api-key-here"
+{% endif %}
