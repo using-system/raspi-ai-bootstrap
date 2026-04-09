@@ -16,7 +16,7 @@
     repo: >-
       deb [arch={{ docker_arch }} signed-by=/etc/apt/keyrings/docker.asc]
       https://download.docker.com/linux/debian
-      {{ ansible_distribution_release }} stable
+      {{ ansible_facts['distribution_release'] }} stable
     filename: docker
     state: present
 
