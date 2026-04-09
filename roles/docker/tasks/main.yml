@@ -14,7 +14,7 @@
 - name: Add Docker apt repository
   ansible.builtin.apt_repository:
     repo: >-
-      deb [arch=arm64 signed-by=/etc/apt/keyrings/docker.asc]
+      deb [arch={{ docker_arch }} signed-by=/etc/apt/keyrings/docker.asc]
       https://download.docker.com/linux/debian
       {{ ansible_distribution_release }} stable
     filename: docker
@@ -42,4 +42,4 @@
     name: docker
     state: started
     enabled: true
-  notify: Restart docker
+  when: not (molecule_test | default(false))

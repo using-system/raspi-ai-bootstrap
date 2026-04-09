@@ -13,12 +13,14 @@
 - name: Set hostname
   ansible.builtin.hostname:
     name: "{{ base_hostname }}"
+  when: not (molecule_test | default(false))
 
 - name: Update /etc/hosts with hostname
   ansible.builtin.lineinfile:
     path: /etc/hosts
     regexp: '^127\.0\.1\.1'
     line: "127.0.1.1\t{{ base_hostname }}"
+  when: not (molecule_test | default(false))
 
 - name: Set timezone
   community.general.timezone:
@@ -28,6 +30,7 @@
   community.general.locale_gen:
     name: "{{ base_locale }}"
     state: present
+  when: not (molecule_test | default(false))
 
 - name: Set default locale
   ansible.builtin.copy:
@@ -41,18 +44,22 @@
   community.general.ufw:
     default: deny
     direction: incoming
+  when: not (molecule_test | default(false))
 
 - name: Configure UFW - allow all outgoing by default
   community.general.ufw:
     default: allow
     direction: outgoing
+  when: not (molecule_test | default(false))
 
 - name: Configure UFW - allow SSH
   community.general.ufw:
     rule: allow
     port: "22"
     proto: tcp
+  when: not (molecule_test | default(false))
 
 - name: Enable UFW
   community.general.ufw:
     state: enabled
+  when: not (molecule_test | default(false))
