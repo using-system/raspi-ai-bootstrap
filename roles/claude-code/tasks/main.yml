@@ -33,3 +33,42 @@
     mode: "0600"
     owner: root
     group: root
+
+- name: Create Claude Code user config directory
+  ansible.builtin.file:
+    path: "~{{ ansible_user }}/.claude"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0755"
+
+- name: Build Claude Code user settings
+  ansible.builtin.set_fact:
+    claude_user_settings: >-
+      {{
+        {}
+        | combine(
+            claude_superpowers_enabled | ternary(
+              {
+                'extraKnownMarketplaces': {
+                  'superpowers-marketplace': {
+                    'source': { 'source': 'github', 'repo': 'obra/superpowers-marketplace' }
+                  }
+                },
+                'enabledPlugins': {
+                  'superpowers@superpowers-marketplace': true
+                }
+              },
+              {}
+            )
+          )
+      }}
+
+- name: Deploy Claude Code user settings
+  ansible.builtin.template:
+    src: claude-settings.json.j2
+    dest: "~{{ ansible_user }}/.claude/settings.json"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0644"
+  when: claude_user_settings | length > 0

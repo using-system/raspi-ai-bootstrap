@@ -34,3 +34,13 @@
     - name: Assert Claude profile script exists
       ansible.builtin.assert:
         that: claude_profile.stat.exists
+
+    - name: Read Claude settings
+      ansible.builtin.slurp:
+        src: "~{{ ansible_user }}/.claude/settings.json"
+      register: claude_settings_content
+
+    - name: Assert Superpowers plugin is configured
+      ansible.builtin.assert:
+        that:
+          - (claude_settings_content.content | b64decode | from_json).enabledPlugins['superpowers@superpowers-marketplace']

@@ -1,2 +1,3 @@
 ---
 nodejs_major_version: "22"
+claude_superpowers_enabled: true
