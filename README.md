@@ -76,16 +76,34 @@ ansible-playbook playbooks/bootstrap.yml --check
 ansible-playbook playbooks/bootstrap.yml
 ```
 
-### 5. Configure Claude Code
+### 5. Configure Claude Code API key
 
-SSH into the Pi and set your API key:
+The API key is managed securely with [Ansible Vault](https://docs.ansible.com/ansible/latest/vault_guide/index.html). Create an encrypted vars file:
 
 ```bash
-ssh pi@192.168.1.100
-echo 'export ANTHROPIC_API_KEY="sk-ant-..."' | sudo tee -a /etc/profile.d/claude.sh
-source /etc/profile.d/claude.sh
-claude --version
+ansible-vault create inventory/group_vars/all/vault.yml
 ```
+
+Add your key inside:
+
+```yaml
+anthropic_api_key: "sk-ant-..."
+```
+
+Then run the playbook with `--ask-vault-pass`:
+
+```bash
+ansible-playbook playbooks/bootstrap.yml --ask-vault-pass
+```
+
+The key will be deployed to `/etc/profile.d/claude.sh` (mode `0600`, root only). If you skip this step, the file is created with a commented-out placeholder instead.
+
+> **Tip:** To avoid typing the vault password every time, store it in a file and reference it:
+> ```bash
+> echo 'my-vault-password' > .vault_pass
+> ansible-playbook playbooks/bootstrap.yml --vault-password-file .vault_pass
+> ```
+> `.vault_pass` is already in `.gitignore`.
 
 ## Running a single role
 

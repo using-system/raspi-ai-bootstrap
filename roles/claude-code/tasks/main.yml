@@ -26,11 +26,10 @@
     global: true
     state: present
 
-- name: Create Claude Code environment profile script
-  ansible.builtin.copy:
+- name: Deploy Claude Code environment profile script
+  ansible.builtin.template:
+    src: claude.sh.j2
     dest: /etc/profile.d/claude.sh
-    content: |
-      # Claude Code configuration
-      # Set your Anthropic API key here
-      # export ANTHROPIC_API_KEY="your-api-key-here"
-    mode: "0644"
+    mode: "0600"
+    owner: root
+    group: root
